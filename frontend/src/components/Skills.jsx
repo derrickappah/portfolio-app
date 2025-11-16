@@ -1,7 +1,13 @@
 import React from 'react';
-import { portfolioData } from '../mock';
+import { usePortfolio } from '../contexts/PortfolioContext';
 
 const Skills = () => {
+  const { portfolioData, loading } = usePortfolio();
+  
+  if (loading || !portfolioData?.skills) {
+    return null;
+  }
+
   return (
     <section id="skills" className="section-padding">
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -20,7 +26,7 @@ const Skills = () => {
             gap: '32px'
           }}
         >
-          {portfolioData.skills.map((skillGroup, index) => (
+          {(portfolioData.skills || []).map((skillGroup, index) => (
             <div
               key={index}
               className="card"

@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { portfolioData } from '../mock';
+import { usePortfolio } from '../contexts/PortfolioContext';
 import { ExternalLink, Filter } from 'lucide-react';
 
 const Projects = () => {
+  const { portfolioData, loading } = usePortfolio();
   const [filter, setFilter] = useState('All');
   const categories = ['All', 'Full-Stack', 'Frontend', 'Backend'];
 
+  if (loading || !portfolioData?.projects) {
+    return null;
+  }
+
   const filteredProjects =
     filter === 'All'
-      ? portfolioData.projects
-      : portfolioData.projects.filter((project) => project.category === filter);
+      ? portfolioData.projects || []
+      : (portfolioData.projects || []).filter((project) => project.category === filter);
 
   return (
     <section id="projects" className="section-padding" style={{ background: 'var(--bg-white)' }}>
@@ -69,18 +74,34 @@ const Projects = () => {
                   background: 'var(--color-background)'
                 }}
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.3s ease'
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                  onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                />
+                {project.image && project.image.trim() !== '' ? (
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.3s ease'
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'var(--color-background)',
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    <span className="text-body">No Image</span>
+                  </div>
+                )}
                 {project.featured && (
                   <div
                     style={{

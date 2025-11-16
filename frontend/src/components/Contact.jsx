@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { portfolioData } from '../mock';
-import { Mail, MapPin, Send } from 'lucide-react';
+import { usePortfolio } from '../contexts/PortfolioContext';
+import { Mail, MapPin, Send, CheckCircle } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import { submitContactForm } from '../services/supabaseService';
 
 const Contact = () => {
+  const { portfolioData, loading } = usePortfolio();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -12,6 +14,7 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,22 +27,49 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Mock submission - will be replaced with backend API
-    setTimeout(() => {
+    try {
+      const result = await submitContactForm(formData);
+      
+      if (result.success) {
+        // Show visual success indicator
+        setShowSuccess(true);
+        
+        toast({
+          title: 'Message Sent!',
+          description: 'Thank you for reaching out. I\'ll get back to you soon.',
+          duration: 5000
+        });
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 5000);
+      } else {
+        throw new Error(result.error || 'Failed to send message');
+      }
+    } catch (error) {
       toast({
-        title: 'Message Sent!',
-        description: 'Thank you for reaching out. I\'ll get back to you soon.',
-        duration: 5000
+        title: 'Error',
+        description: error.message || 'Failed to send message. Please try again.',
+        duration: 5000,
+        variant: 'destructive'
       });
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
+
+  if (loading || !portfolioData?.contact) {
+    return null;
+  }
 
   return (
     <section id="contact" className="section-padding">
@@ -97,7 +127,78 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="card" style={{ padding: '32px' }}>
+          <div className="card" style={{ padding: '32px', position: 'relative' }}>
+            {/* Success Message Overlay */}
+            {showSuccess && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(255, 255, 255, 0.98)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10,
+                  padding: '32px',
+                  animation: 'fadeIn 0.3s ease-in',
+                  borderRadius: '4px'
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '16px',
+                    textAlign: 'center'
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      background: 'var(--accent-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      animation: 'scaleIn 0.5s ease-out',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+                    }}
+                  >
+                    <CheckCircle size={48} color="white" strokeWidth={2.5} />
+                  </div>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: '24px',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      margin: 0
+                    }}
+                  >
+                    Message Sent!
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '16px',
+                      color: 'var(--text-secondary)',
+                      margin: 0,
+                      maxWidth: '300px',
+                      lineHeight: 1.6
+                    }}
+                  >
+                    Thank you for reaching out. I'll get back to you soon.
+                  </p>
+                </div>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: '24px' }}>
                 <label className="label-small" style={{ display: 'block', marginBottom: '8px' }}>

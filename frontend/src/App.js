@@ -3,6 +3,7 @@ import "./App.css";
 import "./styles/portfolio.css";
 import "./fonts/fonts.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PortfolioProvider } from "./contexts/PortfolioContext";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -33,11 +34,13 @@ const Home = () => {
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
+      <PortfolioProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </BrowserRouter>
+      </PortfolioProvider>
     </div>
   );
 }

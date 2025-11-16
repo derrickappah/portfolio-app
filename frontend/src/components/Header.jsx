@@ -48,7 +48,7 @@ const Header = () => {
           }}
         >
           <Link to="/" className="header-logo" style={{ textDecoration: 'none' }}>
-            AM
+            DA
           </Link>
 
           {/* Desktop Navigation */}

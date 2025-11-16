@@ -83,6 +83,21 @@ if (config.enableVisualEdits) {
 // Setup dev server with visual edits and/or health check
 if (config.enableVisualEdits || config.enableHealthCheck) {
   webpackConfig.devServer = (devServerConfig) => {
+    // Explicitly set port to 3000 (default React port)
+    // Force port 3000 to avoid WebSocket connection issues
+    const port = parseInt(process.env.PORT) || 3000;
+    devServerConfig.port = port === 443 ? 3000 : port; // Override 443 if set
+    devServerConfig.host = 'localhost';
+    devServerConfig.client = {
+      ...devServerConfig.client,
+      webSocketURL: {
+        hostname: 'localhost',
+        port: port === 443 ? 3000 : port,
+        protocol: 'ws',
+        pathname: '/ws',
+      },
+    };
+    
     // Apply visual edits dev server setup if enabled
     if (config.enableVisualEdits && setupDevServer) {
       devServerConfig = setupDevServer(devServerConfig);
@@ -106,6 +121,21 @@ if (config.enableVisualEdits || config.enableHealthCheck) {
     }
 
     return devServerConfig;
+  };
+} else {
+  // Even if visual edits/health check are disabled, set port explicitly
+  const port = parseInt(process.env.PORT) || 3000;
+  webpackConfig.devServer = {
+    port: port === 443 ? 3000 : port, // Override 443 if set
+    host: 'localhost',
+    client: {
+      webSocketURL: {
+        hostname: 'localhost',
+        port: port === 443 ? 3000 : port,
+        protocol: 'ws',
+        pathname: '/ws',
+      },
+    },
   };
 }
 

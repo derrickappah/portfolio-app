@@ -1,8 +1,14 @@
 import React from 'react';
 import { Github, Linkedin, Twitter, Mail } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { usePortfolio } from '../contexts/PortfolioContext';
 
 const Footer = () => {
+  const { portfolioData, loading } = usePortfolio();
+  
+  if (loading || !portfolioData) {
+    return null;
+  }
+
   return (
     <footer
       style={{
@@ -23,7 +29,7 @@ const Footer = () => {
         {/* Brand Section */}
         <div>
           <div className="header-logo" style={{ marginBottom: '16px' }}>
-            AM
+            DA
           </div>
           <p className="text-body" style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
             Full-Stack Web Developer specializing in modern web technologies.
@@ -131,7 +137,7 @@ const Footer = () => {
         }}
       >
         <p className="label-small" style={{ margin: 0 }}>
-          © {new Date().getFullYear()} Alex Morgan. All rights reserved.
+          © {new Date().getFullYear()} Derrick Appah. All rights reserved.
         </p>
       </div>
     </footer>

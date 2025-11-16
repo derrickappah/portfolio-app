@@ -1,8 +1,18 @@
 import React from 'react';
-import { portfolioData } from '../mock';
+import { usePortfolio } from '../contexts/PortfolioContext';
 import { ArrowDown } from 'lucide-react';
 
 const Hero = () => {
+  const { portfolioData, loading } = usePortfolio();
+  
+  if (loading || !portfolioData?.hero) {
+    return (
+      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="text-body">Loading...</div>
+      </section>
+    );
+  }
+  
   const scrollToProjects = () => {
     const element = document.getElementById('projects');
     if (element) {
