@@ -181,3 +181,183 @@ export const getProjectById = async (id) => {
   }
 };
 
+/**
+ * Admin: Get all contact messages
+ */
+export const getContactMessages = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error fetching contact messages:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Delete a contact message
+ */
+export const deleteContactMessage = async (id) => {
+  try {
+    const { error } = await supabase
+      .from('contact_messages')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting contact message:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Mark message as read/unread (if you add a read column)
+ */
+export const updateMessageReadStatus = async (id, isRead) => {
+  try {
+    const { error } = await supabase
+      .from('contact_messages')
+      .update({ read: isRead })
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating message status:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Update portfolio data section (hero, about, contact, social)
+ */
+export const updatePortfolioSection = async (section, data) => {
+  try {
+    const { error } = await supabase
+      .from('portfolio_data')
+      .update({ [section]: data })
+      .eq('id', '00000000-0000-0000-0000-000000000001');
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error(`Error updating ${section}:`, error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Update a project
+ */
+export const updateProject = async (id, projectData) => {
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .update(projectData)
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating project:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Create a new project
+ */
+export const createProject = async (projectData) => {
+  try {
+    const { data, error } = await supabase
+      .from('projects')
+      .insert([projectData])
+      .select();
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error creating project:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Delete a project
+ */
+export const deleteProject = async (id) => {
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Update a skill group
+ */
+export const updateSkill = async (id, skillData) => {
+  try {
+    const { error } = await supabase
+      .from('skills')
+      .update(skillData)
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating skill:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Create a new skill group
+ */
+export const createSkill = async (skillData) => {
+  try {
+    const { data, error } = await supabase
+      .from('skills')
+      .insert([skillData])
+      .select();
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error creating skill:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Admin: Delete a skill group
+ */
+export const deleteSkill = async (id) => {
+  try {
+    const { error } = await supabase
+      .from('skills')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting skill:', error);
+    return { success: false, error: error.message };
+  }
+};
+

@@ -11,6 +11,7 @@ import Skills from "./components/Skills";
 import Projects from "./components/Projects";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import AdminPanel from "./components/AdminPanel";
 import { Toaster } from "./components/ui/sonner";
 
 const Home = () => {
@@ -38,6 +39,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/admin" element={<AdminPanel />} />
           </Routes>
         </BrowserRouter>
       </PortfolioProvider>
